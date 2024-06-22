@@ -1,32 +1,73 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:AvaloniaApplication1.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:dialog="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
         x:Class="AvaloniaApplication1.Views.GameWindow"
         x:DataType="vm:GameWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="AvaloniaApplication1">
+        Title="AvaloniaApplication1"
+        Width="300" Height="300" CanResize="False">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:GameWindowViewModel />
     </Design.DataContext>
 
     <Window.Styles>
-        <Style Selector="Button.bright:disabled /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="Chartreuse" />
+        <Style Selector="Button.horizontal:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <ImageBrush Source="/Assets/horizontal.png" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style Selector="Button.vertical:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <ImageBrush Source="/Assets/vertical.png" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style Selector="Button.diagonal_l:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <ImageBrush Source="/Assets/top.png" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style Selector="Button.diagonal_r:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <ImageBrush Source="/Assets/bottom.png" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style Selector="Button /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Foreground" Value="Black" />
+            <Setter Property="BorderBrush" Value="Black" />
+        </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="BorderBrush" Value="Black" />
+        </Style>
+        <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="BorderBrush" Value="Black" />
+        </Style>
+        <Style Selector="Button:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="BorderBrush" Value="Black" />
         </Style>
     </Window.Styles>
 
-    <!-- <Window.Resources> -->
-    <!--     <SolidColorBrush x:Key="ButtonBackgroundDisabled">Chartreuse</SolidColorBrush> -->
-    <!-- </Window.Resources> -->
+    <Window.Background>
+        <ImageBrush Source="/Assets/notebook.png" TileMode="Tile" Stretch="None"
+                    DestinationRect="0 0 40 40" />
+    </Window.Background>
 
-    <StackPanel>
+    <dialog:DialogHost IsOpen="{Binding IsDialogOpen}">
+        <dialog:DialogHost.DialogContent>
+            <TextBlock Text="{Binding DialogContent}"/>
+        </dialog:DialogHost.DialogContent>
         <ItemsRepeater ItemsSource="{Binding  Cells}" Width="300">
             <ItemsRepeater.Layout>
                 <UniformGridLayout MinItemWidth="100" MinItemHeight="100" />
@@ -35,17 +76,17 @@
                 <DataTemplate DataType="vm:CellViewModel">
                     <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                             Command="{Binding CellClickedCommand}"
-                            IsEnabled="{Binding $parent[Window].((vm:GameWindowViewModel)DataContext).GameInProgress}"
-                            Classes.bright="{Binding IsBright}">
+                            IsEnabled="{Binding $parent[Window].((vm:GameWindowViewModel)DataContext).CanMove}"
+                            Classes.horizontal="{Binding IsHorizontal}"
+                            Classes.vertical="{Binding IsVertical}"
+                            Classes.diagonal_l="{Binding IsDiagonal_l}"
+                            Classes.diagonal_r="{Binding IsDiagonal_r}"
+                            BorderBrush="Black" CornerRadius="0">
                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding State}" />
                     </Button>
                 </DataTemplate>
             </ItemsRepeater.ItemTemplate>
         </ItemsRepeater>
-        <StackPanel Orientation="Horizontal" Spacing="5">
-            <Button Command="{Binding ChoosePlayerCommand}">X</Button>
-            <Button>O</Button>
-        </StackPanel>
-    </StackPanel>
+    </dialog:DialogHost>
 
 </Window>

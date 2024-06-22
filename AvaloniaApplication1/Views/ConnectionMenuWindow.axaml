@@ -1,31 +1,53 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:AvaloniaApplication1.ViewModels"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:dialog="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
         x:Class="AvaloniaApplication1.Views.ConnectionMenuWindow"
-        x:DataType="vm:GameWindowViewModel"
-        Title="ConnectionMenuWindow">
+        x:DataType="vm:ConnectionMenuWindowViewModel"
+        Title="ConnectionMenuWindow"
+        Width="354" Height="500" CanResize="False">
 
-    <Grid ColumnDefinitions="*" RowDefinitions="*,*">
-        <Button Grid.Column="0" Grid.Row="0"
-                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                VerticalContentAlignment="Center"
-                HorizontalContentAlignment="Center"
-                Margin="10">
-            <Button.Background>
-                <ImageBrush Source="/Assets/menu_background.jpg" />
-            </Button.Background>
-            PLAY
-        </Button>
-        <Button Grid.Column="0" Grid.Row="1"
-                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                VerticalContentAlignment="Center"
-                HorizontalContentAlignment="Center"
-                Margin="10">
-            CONNECT
-        </Button>
-    </Grid>
+    <Window.DataContext>
+        <vm:ConnectionMenuWindowViewModel />
+    </Window.DataContext>
+
+    <Window.Background>
+        <ImageBrush Source="/Assets/menu_background.jpg" />
+    </Window.Background>
+    <Window.Styles>
+        <Style Selector="Button">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Margin" Value="40" />
+            <Setter Property="FontSize" Value="24" />
+        </Style>
+        <Style Selector="Button /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+    </Window.Styles>
+
+    <dialog:DialogHost IsOpen="{Binding IsDialogOpen}">
+        <dialog:DialogHost.DialogContent>
+            <TextBox Watermark="poshol nahui" Text="{Binding ConnectionString}" KeyDown="InputElement_OnKeyDown"/>
+        </dialog:DialogHost.DialogContent>
+
+        <Grid ColumnDefinitions="*" RowDefinitions="150,*,*">
+            <Button Grid.Column="0" Grid.Row="1"
+                    Content="{Binding HostButtonText}"
+                    Command="{Binding Host}" />
+            <Button Grid.Column="0" Grid.Row="2"
+                    Command="{Binding OpenConnectionDialog}">
+                CONNECT
+            </Button>
+        </Grid>
+    </dialog:DialogHost>
 
 </Window>
