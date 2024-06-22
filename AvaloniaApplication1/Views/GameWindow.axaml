@@ -1,0 +1,51 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AvaloniaApplication1.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaApplication1.Views.GameWindow"
+        x:DataType="vm:GameWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="AvaloniaApplication1">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:GameWindowViewModel />
+    </Design.DataContext>
+
+    <Window.Styles>
+        <Style Selector="Button.bright:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Chartreuse" />
+            <Setter Property="Foreground" Value="Black" />
+        </Style>
+    </Window.Styles>
+
+    <!-- <Window.Resources> -->
+    <!--     <SolidColorBrush x:Key="ButtonBackgroundDisabled">Chartreuse</SolidColorBrush> -->
+    <!-- </Window.Resources> -->
+
+    <StackPanel>
+        <ItemsRepeater ItemsSource="{Binding  Cells}" Width="300">
+            <ItemsRepeater.Layout>
+                <UniformGridLayout MinItemWidth="100" MinItemHeight="100" />
+            </ItemsRepeater.Layout>
+            <ItemsRepeater.ItemTemplate>
+                <DataTemplate DataType="vm:CellViewModel">
+                    <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                            Command="{Binding CellClickedCommand}"
+                            IsEnabled="{Binding $parent[Window].((vm:GameWindowViewModel)DataContext).GameInProgress}"
+                            Classes.bright="{Binding IsBright}">
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding State}" />
+                    </Button>
+                </DataTemplate>
+            </ItemsRepeater.ItemTemplate>
+        </ItemsRepeater>
+        <StackPanel Orientation="Horizontal" Spacing="5">
+            <Button Command="{Binding ChoosePlayerCommand}">X</Button>
+            <Button>O</Button>
+        </StackPanel>
+    </StackPanel>
+
+</Window>
