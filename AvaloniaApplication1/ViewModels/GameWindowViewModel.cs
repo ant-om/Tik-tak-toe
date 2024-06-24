@@ -64,9 +64,9 @@ public class GameWindowViewModel : ViewModelBase
         {
             _socket.Send(Encoding.UTF8.GetBytes($"{cellIndex}"));
         }
-        catch
+        catch (Exception e)
         {
-            DialogContent = "poshol nahui";
+            DialogContent = $"network error: {e.Message}";
             IsDialogOpen = true;
         }
     }
@@ -97,7 +97,7 @@ public class GameWindowViewModel : ViewModelBase
             {
                 var winner = Cells[win.Positions[0]].State;
                 if (winner is null) continue;
-                DialogContent = "ya tvoi hui shatal";
+                DialogContent = $"{winner} wins!";
                 IsDialogOpen = true;
                 // Console.WriteLine($"{winner} won");
                 // GameInProgress = false;
@@ -113,7 +113,7 @@ public class GameWindowViewModel : ViewModelBase
         if (Cells.All(cell => cell.State is not null) && GameInProgress)
         {
             GameInProgress = false;
-            DialogContent = "sosi man pimpis";
+            DialogContent = "draw!";
             IsDialogOpen = true;
         }
 
