@@ -36,7 +36,7 @@
 
     <dialog:DialogHost IsOpen="{Binding IsDialogOpen}">
         <dialog:DialogHost.DialogContent>
-            <TextBox Watermark="poshol nahui" Text="{Binding ConnectionString}" KeyDown="InputElement_OnKeyDown"/>
+            <TextBox Watermark="poshol nahui" Text="{Binding ConnectionString}" KeyDown="InputElement_OnKeyDown" />
         </dialog:DialogHost.DialogContent>
 
         <Grid ColumnDefinitions="*" RowDefinitions="150,*,*">

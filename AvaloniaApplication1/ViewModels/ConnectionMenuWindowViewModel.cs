@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using AvaloniaApplication1.Models;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
@@ -24,9 +25,7 @@ public class ConnectionMenuWindowViewModel : ViewModelBase
 
     public async void Host()
     {
-        using var listeningSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        listeningSocket.Bind(GetLocalIp()!);
-        listeningSocket.Listen();
+        using var listeningSocket = NetworkingModel.CreateListeningSocket();
         ListeningSocket = listeningSocket;
         var communicationSocket = await listeningSocket.AcceptAsync();
         await ShowGameWindow.Handle((communicationSocket, CellState.X));
@@ -38,19 +37,11 @@ public class ConnectionMenuWindowViewModel : ViewModelBase
 
     private async Task Connect(string address)
     {
-        var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        await socket.ConnectAsync(IPEndPoint.Parse(address));
+        var socket = await NetworkingModel.CreateClientSocket(address);
         await ShowGameWindow.Handle((socket, CellState.O));
-    }
-
-    private static EndPoint? GetLocalIp()
-    {
-        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        socket.Connect("1.1.1.1", 65535);
-        return socket.LocalEndPoint;
     }
 
     public Interaction<(Socket, CellState), Unit> ShowGameWindow { get; } = new();
     [Reactive] public bool IsDialogOpen { get; set; }
-    [Reactive] public string ConnectionString { get; set; } = "192.168.50.238:1234"; // TODO remove this
+    [Reactive] public string ConnectionString { get; set; }
 }

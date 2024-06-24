@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
+using AvaloniaApplication1.Models;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
@@ -25,37 +26,7 @@ public class GameWindowViewModel : ViewModelBase
         _socket = socket;
         _localPlayer = localPlayer;
         CanMove = _localPlayer == _currentPlayer;
-        Task.Run(async () =>
-        {
-            while (true)
-            {
-                string response;
-                // try
-                // {
-                var received = await socket.ReceiveAsync(_buffer);
-                response = Encoding.UTF8.GetString(_buffer, 0, received);
-                // }
-                // catch (SocketException)
-                // {
-                //     break;
-                // }
-                // catch (ObjectDisposedException)
-                // {
-                //     break;
-                // }
-
-                foreach (var cmd in response)
-                {
-                    var cellId = cmd - '0';
-                    var remotePlayer = _localPlayer == CellState.X ? CellState.O : CellState.X;
-                    if (cellId is < 0 or > 8) continue;
-                    HandleMove(cellId, remotePlayer);
-                }
-            }
-        }).ContinueWith(t =>
-        {
-            if (t.IsFaulted) throw t.Exception;
-        }, TaskScheduler.FromCurrentSynchronizationContext());
+        NetworkingModel.ReceiveMoves(socket, HandleRemoteMove);
         ChoosePlayerCommand = ReactiveCommand.Create<string, Unit>(ChoosePlayer);
         Cells =
         [
@@ -63,6 +34,13 @@ public class GameWindowViewModel : ViewModelBase
             new(this, 1, 0), new(this, 1, 1), new(this, 1, 2),
             new(this, 2, 0), new(this, 2, 1), new(this, 2, 2),
         ];
+    }
+
+    private void HandleRemoteMove(int cellId)
+    {
+        var remotePlayer = _localPlayer == CellState.X ? CellState.O : CellState.X;
+        if (cellId is < 0 or > 8) return;
+        HandleMove(cellId, remotePlayer);
     }
 
     public ReactiveCommand<string, Unit> ChoosePlayerCommand { get; }
